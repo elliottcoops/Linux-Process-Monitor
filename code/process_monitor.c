@@ -6,62 +6,38 @@
 #include "../headers/sort.h"
 #include "../headers/file_handler.h"
 
+
 int main(int argc, char** argv) {
 
+    DataNode* data_node_head;
+    DataNode* data_node;
+    FILE* f;
     DIR* dp;
     struct dirent *entry;
+    char buffer[1024];
+    ProcessData* process_data;
     int process_count, pid;
 
-    DataNode* data_node_head = NULL;
-    DataNode* data_node = NULL;
+    dp = open_proc_dir(); // Open the process directory
 
-    dp = open_proc_dir();
-
-    data_node_head = malloc(sizeof(DataNode));
+    data_node_head = get_data_node(); // Create a new data node
     data_node = data_node_head;
-
     process_count = 0;
-
     while (entry = readdir(dp)){
-        
-        pid = get_pid(entry);
-        
+        pid = get_pid(entry); // Get the process id from entry
         if (pid > 0) {
-            FILE* f;
-            ProcessData* process_data;
-            char buffer[1024];
-            
             f = open_pid_stats(pid); // Open pid stats file
-            fgets(buffer, 1024, f); // Read line
-
-            process_data = entries(buffer); // Log data
-
-            // Track data
-            data_node->process_data = process_data;
-            data_node->next_data_node = malloc(sizeof(DataNode));
-            data_node = data_node->next_data_node;
-
-            process_count++; 
-
+            read_and_log(data_node, process_data, buffer, f); // Read from from stats file and log
+            process_count++; // Increment process count
             fclose(f); // Close file
         }
     }
+    sort_and_log(data_node_head, process_count); // Sort the processes and display to console
 
-    // Sort by start time and select the top 10 
-    ProcessData* recent_processes = msort_processes(data_node_head, process_count);
-    
-    // Display the information about the top 10 most recent processes based don start time
-    for (int process = 0; process < MAX_TRACKING; process++) {
-        ProcessData pd = recent_processes[process];
-        printf("PID: %d\nEXE FILENAME: %s\nPRIORITY: %d \nCURRENT STATE: %s\n{USER} CPU CLOCK TIME: %ld\n{KERNEL} CPU CLOCK TIME: %ld\nCPU START TIME: %ld\n", 
-        pd.pid, pd.exe_filename, pd.process_priority, pd.process_state, pd.usr_cpu_clocks, pd.krnl_cpu_clocks, pd.cpu_start_time);
-
-        printf("\n\n");
-    }
-
-    // Free memory
+    // Cleanup
     free_data_nodes(data_node_head);
     closedir(dp);
 
     return 0;
 }
+

@@ -21,6 +21,7 @@ typedef struct DataNode {
     struct DataNode* next_data_node;
 } DataNode;
 
+DataNode* get_data_node();
 void free_data_nodes(DataNode* node);
 
 #endif

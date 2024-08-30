@@ -9,7 +9,8 @@
 DIR* open_proc_dir();
 int get_pid(struct dirent* entry);
 FILE* open_pid_stats(int pid);
-ProcessData* entries(char*);
-void get_entry(ProcessData*, int, char*);
+ProcessData* process_file(char*);
+void get_file_entry(ProcessData*, int, char*);
+void read_and_log(DataNode* data_node, ProcessData* process_data, char* buffer, FILE* f);
 
 #endif
