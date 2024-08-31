@@ -2,6 +2,7 @@
 #define CONFIG_H
 
 #define MAX_TRACKING 10
+#define ERR_LOG_FILE "err_log.txt"
 
 typedef struct ProcessData {
     int pid;
@@ -22,6 +23,9 @@ typedef struct DataNode {
 } DataNode;
 
 DataNode* get_data_node();
+ProcessData* get_process_data();
+ProcessData* get_process_data_arr(int size);
 void free_data_nodes(DataNode* node);
+void log_error(const char* message);
 
 #endif

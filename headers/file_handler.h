@@ -7,10 +7,11 @@
 #include "../headers/sort.h"
 
 DIR* open_proc_dir();
-int get_pid(struct dirent* entry);
-FILE* open_pid_stats(int pid);
+int get_pid(struct dirent*);
+FILE* open_pid_stats(int);
 ProcessData* process_file(char*);
 void get_file_entry(ProcessData*, int, char*);
-void read_and_log(DataNode* data_node, ProcessData* process_data, char* buffer, FILE* f);
+void read_and_log(DataNode*, ProcessData*, char*, FILE*);
+void strip_filename(char*);
 
 #endif

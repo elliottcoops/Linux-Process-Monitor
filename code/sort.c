@@ -10,22 +10,21 @@ void msort(ProcessData* arr, int size) {
 
     // Find mp
     int mp = size / 2;
-
     // Split array into left and right subarrays
-    ProcessData* left = (ProcessData*)calloc(sizeof(ProcessData), mp);
-    ProcessData* right = (ProcessData*)calloc(sizeof(ProcessData), size-mp);
-
+    ProcessData* left = get_process_data_arr(mp);
+    ProcessData* right = get_process_data_arr(size-mp);
+    if (!left || !right){
+        log_error("Failed to allocate memory for left or right array\n");
+        return;
+    }
     // Populate left and right subarrays
     for (int i = 0; i < mp; i++){ left[i] = arr[i];}
     for (int i = mp; i < size; i++){ right[i-mp] = arr[i];}
-
     // Sort left and right
     msort(left, mp);
     msort(right, size-mp);
-
     // Merge left and right
     merge(arr, left, mp, right, size-mp);
-
     // Post process memory free
     free(left);
     free(right);
@@ -53,9 +52,13 @@ void merge(ProcessData* arr, ProcessData* left, int left_size, ProcessData* righ
 // Create suitable array to be sorted and initialise the sort
 ProcessData* msort_processes(DataNode* data_node_head, int size) {
     // Put into process data array
-    ProcessData* process_data_arr = (ProcessData*)calloc(sizeof(ProcessData), size);
     DataNode* data_node;
     int ptr;
+    ProcessData* process_data_arr = get_process_data_arr(size);
+    if (!process_data_arr) {
+        log_error("Failed to alloate memory for process_data_arr in msort_processes\n");
+        return NULL;
+    }
     
     ptr = 0;
     data_node = data_node_head;   
@@ -74,12 +77,35 @@ ProcessData* msort_processes(DataNode* data_node_head, int size) {
 void sort_and_log(DataNode* data_node_head, int process_count) {
     // Sort by start time and select the top 10 
     ProcessData* recent_processes = msort_processes(data_node_head, process_count);
+
+    if (!recent_processes){
+        return;
+    } 
     
     // Display the information about the top 10 most recent processes based don start time
-    for (int process = 0; process < MAX_TRACKING; process++) {
+    for (int process = 0; process < min(MAX_TRACKING, process_count); process++) {
         ProcessData pd = recent_processes[process];
-        printf("PID: %d\nEXE FILENAME: %s\nPRIORITY: %d \nCURRENT STATE: %s\n{USER} CPU CLOCK TIME: %ld\n{KERNEL} CPU CLOCK TIME: %ld\nCPU START TIME: %ld\n", 
-        pd.pid, pd.exe_filename, pd.process_priority, pd.process_state, pd.usr_cpu_clocks, pd.krnl_cpu_clocks, pd.cpu_start_time);
-        printf("\n\n");
+        if (!(&pd)){
+            log_error("Failed to find process in sort_and_log");
+            continue;
+        }
+        printf("===PROCESS ID: %d===\n", pd.pid);
+        printf("{EXE} %s\n", pd.exe_filename);
+        printf("{CURRENT STATE} %s\n", pd.process_state);
+        printf("{KERNEL CPU TICKS} %ld\n", pd.krnl_cpu_clocks);
+        printf("{USER CPU TICKS} %ld\n", pd.usr_cpu_clocks);
+        printf("{TOTAL CPU TICKS} %ld\n", pd.krnl_cpu_clocks + pd.usr_cpu_clocks);
+        printf("{CPU START TIME} %ld\n", pd.cpu_start_time);
+        printf("{PRIORITY} %d\n", pd.process_priority);
+        printf("{VIRTUAL MEMORY SIZE (BYTES)} %ld\n", pd.v_mem_size);
+        printf("{PREVIOUS CPU EXECUTED} %d\n", pd.last_cpu);
+        printf("======================\n\n");
+
     }
+}
+
+int min(int a, int b) {
+    if (a <=b)
+        return a;
+    return b;
 }
