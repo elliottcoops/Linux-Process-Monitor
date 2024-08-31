@@ -55,10 +55,12 @@ void get_file_entry(ProcessData* process_data, int entry, char* token) {
             process_data->pid = atoi(token);
             break;
         case 1:
-            process_data->exe_filename = token;
+            process_data->exe_filename = calloc(sizeof(char), strlen(token)+1);
+            strcpy(process_data->exe_filename, token);
             break;
         case 2:
-            process_data->process_state = token;
+            process_data->process_state = calloc(sizeof(char), strlen(token)+1);
+            strcpy(process_data->process_state, token);
             break;
         case 13:
             process_data->usr_cpu_clocks = atol(token);
@@ -88,6 +90,5 @@ void read_and_log(DataNode* data_node, ProcessData* process_data, char* buffer, 
     process_data = process_file(buffer); // Log data
     data_node->process_data = process_data;
     data_node->next_data_node = malloc(sizeof(DataNode));
-    data_node = data_node->next_data_node;
 }
 

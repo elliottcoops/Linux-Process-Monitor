@@ -8,8 +8,12 @@ DataNode* get_data_node(){ return malloc(sizeof(DataNode));}
 void free_data_nodes(DataNode* node) {
     DataNode* next_node = NULL;
     do {
-        if (node->process_data != NULL)
-            free(node->process_data);
+        if (node->process_data != NULL){
+            ProcessData* process_data = node->process_data;
+            free(process_data->exe_filename);
+            free(process_data->process_state);
+            free(process_data);
+        }
         next_node = node->next_data_node;
         if (node != NULL)
             free(node);

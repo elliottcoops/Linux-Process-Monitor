@@ -80,7 +80,6 @@ void sort_and_log(DataNode* data_node_head, int process_count) {
         ProcessData pd = recent_processes[process];
         printf("PID: %d\nEXE FILENAME: %s\nPRIORITY: %d \nCURRENT STATE: %s\n{USER} CPU CLOCK TIME: %ld\n{KERNEL} CPU CLOCK TIME: %ld\nCPU START TIME: %ld\n", 
         pd.pid, pd.exe_filename, pd.process_priority, pd.process_state, pd.usr_cpu_clocks, pd.krnl_cpu_clocks, pd.cpu_start_time);
-
         printf("\n\n");
     }
 }
