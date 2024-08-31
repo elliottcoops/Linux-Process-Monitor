@@ -83,23 +83,27 @@ void sort_and_log(DataNode* data_node_head, int process_count) {
     } 
     
     // Display the information about the top 10 most recent processes based don start time
+    // printf("PID\tCURRENT STATE\tCPU TIME\tSTART TIME\tPRIORITY\tLAST CPU\tVRAM\n");
+    printf("%-48s%-8s%-16s%-12s%-12s%-10s%-10s%-8s\n", ".EXE NAME", "PID", "CURRENT STATE", "CPU TIME", "START TIME", "PRIORITY", "LAST CPU", "VRAM (BYTES)");
+    printf("--------------------------------------------------------------------------------------------------------------------------------\n");
+
     for (int process = 0; process < min(MAX_TRACKING, process_count); process++) {
         ProcessData pd = recent_processes[process];
         if (!(&pd)){
             log_error("Failed to find process in sort_and_log");
             continue;
         }
-        printf("===PROCESS ID: %d===\n", pd.pid);
-        printf("{EXE} %s\n", pd.exe_filename);
-        printf("{CURRENT STATE} %s\n", pd.process_state);
-        printf("{KERNEL CPU TICKS} %ld\n", pd.krnl_cpu_clocks);
-        printf("{USER CPU TICKS} %ld\n", pd.usr_cpu_clocks);
-        printf("{TOTAL CPU TICKS} %ld\n", pd.krnl_cpu_clocks + pd.usr_cpu_clocks);
-        printf("{CPU START TIME} %ld\n", pd.cpu_start_time);
-        printf("{PRIORITY} %d\n", pd.process_priority);
-        printf("{VIRTUAL MEMORY SIZE (BYTES)} %ld\n", pd.v_mem_size);
-        printf("{PREVIOUS CPU EXECUTED} %d\n", pd.last_cpu);
-        printf("======================\n\n");
+  
+        printf("%-48s%-8d%-16s%-12ld%-12ld%-10d%-10d%-8ld\n",
+            pd.exe_filename,
+            pd.pid,
+            pd.process_state,
+            pd.krnl_cpu_clocks + pd.usr_cpu_clocks,
+            pd.cpu_start_time,
+            pd.process_priority,
+            pd.last_cpu,
+            pd.v_mem_size
+        );
 
     }
 }
