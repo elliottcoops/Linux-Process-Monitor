@@ -1,7 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
+
 #include "../headers/config.h"
 #include "../headers/sort.h"
+#include "../headers/process_stats.h"
 
 // Conduct merge sort on the process data
 void msort(ProcessData* arr, int size) {
@@ -37,7 +40,9 @@ void merge(ProcessData* arr, ProcessData* left, int left_size, ProcessData* righ
 
     // Sort in order of left and right subarray
     while (left_ptr < left_size && right_ptr < right_size) {
-        if (left[left_ptr].cpu_start_time >= right[right_ptr].cpu_start_time) {
+        float left_cpu_util = left[left_ptr].cpu_utilisation;
+        float right_cpu_util = right[right_ptr].cpu_utilisation;
+        if (left_cpu_util >= right_cpu_util) {
             arr[ptr++] = left[left_ptr++];
         } else {
             arr[ptr++] = right[right_ptr++];
@@ -54,6 +59,8 @@ ProcessData* msort_processes(DataNode* data_node_head, int size) {
     // Put into process data array
     DataNode* data_node;
     int ptr;
+
+    calculate_cpu_utilisation(data_node_head);
     ProcessData* process_data_arr = get_process_data_arr(size);
     if (!process_data_arr) {
         log_error("Failed to alloate memory for process_data_arr in msort_processes\n");
@@ -72,44 +79,3 @@ ProcessData* msort_processes(DataNode* data_node_head, int size) {
 
     return process_data_arr;
 }   
-
-// Sort the processes by start time and log the information to console
-void sort_and_log(DataNode* data_node_head, int process_count) {
-    // Sort by start time and select the top 10 
-    ProcessData* recent_processes = msort_processes(data_node_head, process_count);
-
-    if (!recent_processes){
-        return;
-    } 
-    
-    // Display the information about the top 10 most recent processes based don start time
-    // printf("PID\tCURRENT STATE\tCPU TIME\tSTART TIME\tPRIORITY\tLAST CPU\tVRAM\n");
-    printf("%-48s%-8s%-16s%-12s%-12s%-10s%-10s%-8s\n", ".EXE NAME", "PID", "CURRENT STATE", "CPU TIME", "START TIME", "PRIORITY", "LAST CPU", "VRAM (BYTES)");
-    printf("--------------------------------------------------------------------------------------------------------------------------------\n");
-
-    for (int process = 0; process < min(MAX_TRACKING, process_count); process++) {
-        ProcessData pd = recent_processes[process];
-        if (!(&pd)){
-            log_error("Failed to find process in sort_and_log");
-            continue;
-        }
-  
-        printf("%-48s%-8d%-16s%-12ld%-12ld%-10d%-10d%-8ld\n",
-            pd.exe_filename,
-            pd.pid,
-            pd.process_state,
-            pd.krnl_cpu_clocks + pd.usr_cpu_clocks,
-            pd.cpu_start_time,
-            pd.process_priority,
-            pd.last_cpu,
-            pd.v_mem_size
-        );
-
-    }
-}
-
-int min(int a, int b) {
-    if (a <=b)
-        return a;
-    return b;
-}

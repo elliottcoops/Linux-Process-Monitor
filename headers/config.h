@@ -3,6 +3,8 @@
 
 #define MAX_TRACKING 10
 #define ERR_LOG_FILE "err_log.txt"
+#define CLOCK_RATE get_clock_rate()
+#define WAIT_TIME 1000000
 
 typedef struct ProcessData {
     int pid;
@@ -10,6 +12,8 @@ typedef struct ProcessData {
     char* process_state;
     long usr_cpu_clocks;
     long krnl_cpu_clocks;
+    long logged_clock_time;
+    float cpu_utilisation;
     long cpu_start_time;
     int process_priority;
     long v_mem_size;

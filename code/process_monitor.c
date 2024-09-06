@@ -6,6 +6,7 @@
 #include "../headers/config.h"
 #include "../headers/sort.h"
 #include "../headers/file_handler.h"
+#include "../headers/display.h"
 
 
 int main(int argc, char** argv) {
@@ -50,16 +51,13 @@ int main(int argc, char** argv) {
 
         free(data_node);
         prev_data_node->next_data_node = NULL;
-        
-        sort_and_log(data_node_head, process_count); // Sort the processes and display to console
+
+        usleep(WAIT_TIME*3);
+        log_process_data(data_node_head, process_count); // Sort the processes and display to console
 
         // Cleanup
         free_data_nodes(data_node_head);
         closedir(dp);
-
-        usleep(1000000);
-        system("clear");
-
     }
 
     return 0;

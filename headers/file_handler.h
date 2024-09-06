@@ -12,6 +12,8 @@ FILE* open_pid_stats(int);
 ProcessData* process_file(char*);
 void get_file_entry(ProcessData*, int, char*);
 void read_and_log(DataNode*, ProcessData*, char*, FILE*);
+long get_cpu_time();
+long get_process_cpu_time(int);
 void strip_filename(char*);
 
 #endif
