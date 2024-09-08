@@ -11,7 +11,7 @@ Assuming you are in the `Linux-Process-Monitor` directory.
 
 1. Install [gcc compiler](https://gcc.gnu.org/install/) if you don't have one
 2. Compile code using `gcc code/*.c -o <exe_filename>` 
-3. Run using ./<exe_filename>
+3. Run using `./<exe_filename>`
 
 ## Pipeline
 
