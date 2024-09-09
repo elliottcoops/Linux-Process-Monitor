@@ -7,11 +7,11 @@ This repository contains a process monitor written in C for Linux. For each proc
 
 ## How to use
 
-Assuming you are in the `Linux-Process-Monitor` directory.
-
-1. Install [gcc compiler](https://gcc.gnu.org/install/) if you don't have one
-2. Compile code using `gcc code/*.c -o <exe_filename>` 
-3. Run using `./<exe_filename>`
+1. Clone the repository using `git clone https://github.com/elliottcoops/Linux-Process-Monitor.git`
+2. Install [gcc compiler](https://gcc.gnu.org/install/) if you don't have one
+3. Navigate to the `Linux-Process-Monitor` directory
+4. Compile code using `gcc code/*.c -o <exe_filename>` 
+5. Run using `./<exe_filename>`
 
 ## Pipeline
 
